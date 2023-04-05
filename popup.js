@@ -6,6 +6,9 @@ var description;
 var gComp;
 var gAsset;
 var gAlignTeam;
+var gSolution;
+var gSolutionDetail;
+var gJiraGroup;
 // asyncRequestCount keeps track of when the sub-tasks and labels are being sent.
 var asyncRequestCount = 0;
 /**This if checks the users browser and grabs their browser information based on this.*/
@@ -14,27 +17,33 @@ chrome.tabs.query({'active': true, 'currentWindow': true}, function (tabs) {
   getURLs(url);
   chrome.scripting.executeScript({
     target: {tabId: tabs[0].id},
-    //func: getValues,
+    func: getValues,
   })
-  //.then(injectionResults => {
-    //for (const {frameId, result} of injectionResults) {
-      //gComp = result['component'];
-      //gAsset = result['asset'];
-      //gAlignTeam = result['alignTeam'];
-    //};
-  //});
+  .then(injectionResults => {
+    for (const {frameId, result} of injectionResults) {
+      /**gComp = result['component'];**/
+      gAsset = result['asset'];
+      gAlignTeam = result['alignTeam'];
+      gSolution = result['solution'];
+      gSolutionDetail = result['solutionDetail'];
+      gJiraGroup = result ['jiraGroup'];
+    };
+  });
 });
 
 function getValues(){
   return {
-    component: document.getElementById('components-val').innerText,
+    /**component: document.getElementById('components-val').innerText,**/
     asset: document.getElementById('customfield_22100-val').innerText,
     alignTeam: document.getElementById('customfield_22101-val').innerText,
+    solution: document.getElementById('customfield_14800-val').innerText,
+    solutionDetail: document.getElementById('customfield_14801-val').innerText,
+    jiraGroup: document.getElementById('customfield_14802-val').innerText,
   }
 };
 
 window.onload = () => {
-  document.getElementById('scYes').onclick = () => {
+  document.getElementById('scYesNonDevWorkflow').onclick = () => {
     document.getElementById('loader').style.display = "block";
          
     addSubTask(
@@ -44,10 +53,10 @@ window.onload = () => {
         "summary":"Documentation",
         "description":"- Link to help documentation that was created or change due to this issue \n OR \n - Confirmation no help documentation needed to be created or updated due to this issue",
         "issuetype":{  "name":"Sub-task"},
-        //"components":[{ "name": gComp}],
-        //"customfield_22100": gAsset,
-        //"customfield_22101": gAlignTeam
-      }
+        "components":[{ "name": gComp}],
+        "customfield_22100": gAsset,
+        "customfield_22101": gAlignTeam
+        }
       }
     );
     console.log("Documentation Sent");
@@ -59,10 +68,10 @@ window.onload = () => {
         "summary":"Requirements",
         "description":"- Link to signed, finalized requirements covering this issue \n OR \n - Short comment on why this issue did not require requirements \n\n  Note: If the issue is a defect, please reference the original requirements covering this functionality along with the Jira Number that introduced this defect",
         "issuetype":{  "name":"Sub-task"},
-        //"components":[{ "name": gComp}],
-        //"customfield_22100": gAsset,
-        //"customfield_22101": gAlignTeam
-      }
+        "components":[{ "name": gComp}],
+        "customfield_22100": gAsset,
+        "customfield_22101": gAlignTeam
+        }
       }
     );
     console.log("Requirements Sent");
@@ -74,10 +83,10 @@ window.onload = () => {
         "summary":"Release Information",
         "description":"The Developer should work with the PO or PO Delegate to provide the following information needed for the release of this issue:\n - Will this issue release on its own, or part of a larger epic? \n - Will the release of this issue cause any performance impacts (IF, PD, Down). If so, to what and for how long? \n - Should this change be announced to users? \n - Will any resources outside of the development team be needed to assist in the deployment to production? If so, whom?",
         "issuetype":{  "name":"Sub-task"},
-        //"components":[{ "name": gComp}],
-        //"customfield_22100": gAsset,
-        //"customfield_22101": gAlignTeam
-      }
+        "components":[{ "name": gComp}],
+        "customfield_22100": gAsset,
+        "customfield_22101": gAlignTeam
+        }
       }
     );
     console.log("Release Information Sent");
@@ -88,10 +97,10 @@ window.onload = () => {
       "summary":"Certification",
       "description":"- Link to test runs (including if there were failed runs), to the eventual successful test run \n OR \n - Attached screenshots of test runs (including if there were failed runs), to the eventual successful test run \n OR \n - Short comment on why this issue did not require certification",
       "issuetype":{  "name":"Sub-task"},
-      //"components":[{ "name": gComp}],
-      //"customfield_22100": gAsset,
-      //"customfield_22101": gAlignTeam
-      }
+      "components":[{ "name": gComp}],
+      "customfield_22100": gAsset,
+      "customfield_22101": gAlignTeam
+    }
       }
     );
     console.log("Certification Sent");
@@ -102,10 +111,10 @@ window.onload = () => {
         "summary":"Code Review",
         "description":"- Link to the reviewed and signed Code Review \n OR \n - Short comment on why this issue did not require a code review",
         "issuetype":{  "name":"Sub-task"},
-        //"components":[{ "name": gComp}],
-        //"customfield_22100": gAsset,
-        //"customfield_22101": gAlignTeam
-      }
+        "components":[{ "name": gComp}],
+        "customfield_22100": gAsset,
+        "customfield_22101": gAlignTeam
+        }
       }
     );
     console.log("Code Review Sent");
@@ -117,16 +126,16 @@ window.onload = () => {
         "summary":"Tech Design",
         "description":"- Link to reviewed and approved tech design covering this issue \n OR \n - Short comment on why this issue did not require a tech design \n\n Note: If the issue is a defect, please reference the original tech design covering this functionality along ",
         "issuetype":{  "name":"Sub-task"},
-        //"components":[{ "name": gComp}],
-        //"customfield_22100": gAsset,
-        //"customfield_22101": gAlignTeam
-      }
+        "components":[{ "name": gComp}],
+        "customfield_22100": gAsset,
+        "customfield_22101": gAlignTeam
+        }
       }
     );
     console.log("Tech Design Sent");
   };
-  
-  document.getElementById('scYesA').onclick = () => {
+
+  document.getElementById('scYesAndromeda').onclick = () => {
     document.getElementById('loader').style.display = "block";
     addSubTask(
       {"fields":{
@@ -135,10 +144,10 @@ window.onload = () => {
         "summary":"Project Kickoff",
         "description":"- List the general planned code changes, and give any helpful context about why. \n- List APIs to update or create. \n- List expected test cases (how will we verify this?). Check to see if test data that is needed is available or needs to be created, especially if it will require outside help to create. \n- Anything additional the developer thinks needs to be shared with the team.",
         "issuetype":{  "name":"Sub-task"},
-        //"components":[{ "name": gComp}],
-        //"customfield_22100": gAsset,
-        //"customfield_22101": gAlignTeam
-      }
+        "components":[{ "name": gComp}],
+        "customfield_22100": gAsset,
+        "customfield_22101": gAlignTeam
+        }
       }
     );
     console.log("Project Kickoff Sent");
@@ -150,10 +159,10 @@ window.onload = () => {
         "summary":"Documentation",
         "description":"- Link to help documentation that was created or change due to this issue \n OR \n - Confirmation no help documentation needed to be created or updated due to this issue",
         "issuetype":{  "name":"Sub-task"},
-        //"components":[{ "name": gComp}],
-        //"customfield_22100": gAsset,
-        //"customfield_22101": gAlignTeam
-      }
+        "components":[{ "name": gComp}],
+        "customfield_22100": gAsset,
+        "customfield_22101": gAlignTeam
+        }
       }
     );
     console.log("Documentation Sent"); 
@@ -165,10 +174,10 @@ window.onload = () => {
         "summary":"Requirements",
         "description":"- Link to signed, finalized requirements covering this issue \n OR \n - Short comment on why this issue did not require requirements \n\n  Note: If the issue is a defect, please reference the original requirements covering this functionality along with the Jira Number that introduced this defect",
         "issuetype":{  "name":"Sub-task"},
-        //"components":[{ "name": gComp}],
-        //"customfield_22100": gAsset,
-        //"customfield_22101": gAlignTeam
-      }
+        "components":[{ "name": gComp}],
+        "customfield_22100": gAsset,
+        "customfield_22101": gAlignTeam
+        }
       }
     );
     console.log("Requirements Sent");
@@ -180,10 +189,10 @@ window.onload = () => {
         "summary":"Release Information",
         "description":"The Developer should work with the PO or PO Delegate to provide the following information needed for the release of this issue:\n - Will this issue release on its own, or part of a larger epic? \n - Will the release of this issue cause any performance impacts (IF, PD, Down). If so, to what and for how long? \n - Should this change be announced to users? \n - Will any resources outside of the development team be needed to assist in the deployment to production? If so, whom?",
         "issuetype":{  "name":"Sub-task"},
-        //"components":[{ "name": gComp}],
-        //"customfield_22100": gAsset,
-        //"customfield_22101": gAlignTeam
-      }
+        "components":[{ "name": gComp}],
+        "customfield_22100": gAsset,
+        "customfield_22101": gAlignTeam
+        }
       }
     );
     console.log("Release Information Sent");
@@ -194,9 +203,123 @@ window.onload = () => {
       "summary":"Certification",
       "description":"- Link to test runs (including if there were failed runs), to the eventual successful test run \n OR \n - Attached screenshots of test runs (including if there were failed runs), to the eventual successful test run \n OR \n - Short comment on why this issue did not require certification",
       "issuetype":{  "name":"Sub-task"},
-      //"components":[{ "name": gComp}],
-      //"customfield_22100": gAsset,
-      //"customfield_22101": gAlignTeam
+      "components":[{ "name": gComp}],
+      "customfield_22100": gAsset,
+      "customfield_22101": gAlignTeam
+      }
+    }
+    );
+    console.log("Certification Sent");
+    
+    addSubTask(
+      {"fields":{  "project":{  "key": project },
+        "parent":{ "key": jiraKey},
+        "summary":"Code Review",
+        "description":"- Link to the reviewed and signed Code Review \n OR \n - Short comment on why this issue did not require a code review",
+        "issuetype":{  "name":"Sub-task"},
+        "components":[{ "name": gComp}],
+        "customfield_22100": gAsset,
+        "customfield_22101": gAlignTeam
+        }
+      }
+    );
+    console.log("Code Review Sent");
+    
+    addSubTask(
+      {"fields":{
+        "project":{  "key": project },
+        "parent":{ "key": jiraKey},
+        "summary":"Tech Design",
+        "description":"- Link to reviewed and approved tech design covering this issue \n OR \n - Short comment on why this issue did not require a tech design \n\n Note: If the issue is a defect, please reference the original tech design covering this functionality along ",
+        "issuetype":{  "name":"Sub-task"},
+        "components":[{ "name": gComp}],
+        "customfield_22100": gAsset,
+        "customfield_22101": gAlignTeam
+        }
+      }
+    );
+    console.log("Tech Design Sent");  
+  };
+
+  document.getElementById('scYesAndromedaSpike').onclick = () => {
+    document.getElementById('loader').style.display = "block";
+    addSubTask(
+      {"fields":{
+        "project":{  "key": project },
+        "parent":{ "key": jiraKey},
+        "summary":"Project Kickoff",
+        "description":"- List the general planned code changes, and give any helpful context about why. \n- List APIs to update or create. \n- List expected test cases (how will we verify this?). Check to see if test data that is needed is available or needs to be created, especially if it will require outside help to create. \n- Anything additional the developer thinks needs to be shared with the team.",
+        "issuetype":{  "name":"Sub-task"},
+        "components":[{ "name": gComp}],
+        "customfield_22100": gAsset,
+        "customfield_22101": gAlignTeam
+        }
+      }
+    );
+    console.log("Project Kickoff Sent");
+  };
+  
+  document.getElementById('scYesDevWorkflow').onclick = () => {
+    document.getElementById('loader').style.display = "block";
+    addSubTask(
+      {"fields":{  
+        "project":{  "key": project },
+        "parent":{ "key": jiraKey},
+        "summary":"Documentation",
+        "description":"- Link to help documentation that was created or change due to this issue \n OR \n - Confirmation no help documentation needed to be created or updated due to this issue",
+        "issuetype":{  "name":"Sub-task"},
+        /**"components":[{ "name": gComp}],**/
+        "customfield_14800": gSolution,
+        "customfield_14801": gSolutionDetail,
+        "customfield_14802": gJiraGroup
+        }
+      }
+    );
+    console.log("Documentation Sent"); 
+    
+    addSubTask(
+      {"fields":{  
+        "project":{  "key": project },
+        "parent":{ "key": jiraKey},
+        "summary":"Requirements",
+        "description":"- Link to signed, finalized requirements covering this issue \n OR \n - Short comment on why this issue did not require requirements \n\n  Note: If the issue is a defect, please reference the original requirements covering this functionality along with the Jira Number that introduced this defect",
+        "issuetype":{  "name":"Sub-task"},
+        /**"components":[{ "name": gComp}],**/
+        "customfield_14800": gSolution,
+        "customfield_14801": gSolutionDetail,
+        "customfield_14802": gJiraGroup
+        }
+      }
+    );
+    console.log("Requirements Sent");
+    
+    addSubTask(
+      {"fields":{
+        "project":{  "key": project },
+        "parent":{ "key": jiraKey},
+        "summary":"Release Information",
+        "description":"The Developer should work with the PO or PO Delegate to provide the following information needed for the release of this issue:\n - Will this issue release on its own, or part of a larger epic? \n - Will the release of this issue cause any performance impacts (IF, PD, Down). If so, to what and for how long? \n - Should this change be announced to users? \n - Will any resources outside of the development team be needed to assist in the deployment to production? If so, whom?",
+        "issuetype":{  "name":"Sub-task"},
+        /**"components":[{ "name": gComp}],**/
+        "customfield_14800": gSolution,
+        "customfield_14801": gSolutionDetail,
+        "customfield_14802": gJiraGroup
+        }
+      }
+    );
+    console.log("Release Information Sent");
+    
+    addSubTask(
+      {"fields":{  
+        "project":{  "key": project },
+        "parent":{ "key": jiraKey},
+        "summary":"Certification",
+        "description":"- Link to test runs (including if there were failed runs), to the eventual successful test run \n OR \n - Attached screenshots of test runs (including if there were failed runs), to the eventual successful test run \n OR \n - Short comment on why this issue did not require certification",
+        "issuetype":{  "name":"Sub-task"},
+        /**"components":[{ "name": gComp}],**/
+        "customfield_14800": gSolution,
+        "customfield_14801": gSolutionDetail,
+        "customfield_14802": gJiraGroup
       }
       }
     );
@@ -208,9 +331,10 @@ window.onload = () => {
         "summary":"Code Review",
         "description":"- Link to the reviewed and signed Code Review \n OR \n - Short comment on why this issue did not require a code review",
         "issuetype":{  "name":"Sub-task"},
-        //"components":[{ "name": gComp}],
-        //"customfield_22100": gAsset,
-        //"customfield_22101": gAlignTeam
+        /**"components":[{ "name": gComp}],**/
+        "customfield_14800": gSolution,
+        "customfield_14801": gSolutionDetail,
+        "customfield_14802": gJiraGroup
       }
       }
     );
@@ -223,16 +347,17 @@ window.onload = () => {
         "summary":"Tech Design",
         "description":"- Link to reviewed and approved tech design covering this issue \n OR \n - Short comment on why this issue did not require a tech design \n\n Note: If the issue is a defect, please reference the original tech design covering this functionality along ",
         "issuetype":{  "name":"Sub-task"},
-        //"components":[{ "name": gComp}],
-        //"customfield_22100": gAsset,
-        //"customfield_22101": gAlignTeam
+        /**"components":[{ "name": gComp}],**/
+        "customfield_14800": gSolution,
+        "customfield_14801": gSolutionDetail,
+        "customfield_14802": gJiraGroup
       }
       }
     );
     console.log("Tech Design Sent");  
   };
 
-  document.getElementById('scYesB').onclick = () => {
+  document.getElementById('scYesAndromedaSpike').onclick = () => {
     document.getElementById('loader').style.display = "block";
     addSubTask(
       {"fields":{
@@ -241,16 +366,15 @@ window.onload = () => {
         "summary":"Project Kickoff",
         "description":"- List the general planned code changes, and give any helpful context about why. \n- List APIs to update or create. \n- List expected test cases (how will we verify this?). Check to see if test data that is needed is available or needs to be created, especially if it will require outside help to create. \n- Anything additional the developer thinks needs to be shared with the team.",
         "issuetype":{  "name":"Sub-task"},
-        //"components":[{ "name": gComp}],
-        //"customfield_22100": gAsset,
-        //"customfield_22101": gAlignTeam
+        "components":[{ "name": gComp}],
+        "customfield_22100": gAsset,
+        "customfield_22101": gAlignTeam
       }
       }
     );
     console.log("Project Kickoff Sent");
   };
 };
-
 
 function addSubTask(subtask){
   var xhr = new XMLHttpRequest;
